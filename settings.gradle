@@ -1,0 +1,20 @@
+pluginManagement {
+    repositories {
+        mavenLocal()
+        google()
+        mavenCentral()
+        maven { url 'https://maven.scijava.org/content/repositories/public/' }
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        mavenLocal()
+        google()
+        mavenCentral()
+        maven { url 'https://maven.scijava.org/content/repositories/public/' }
+    }
+}
+rootProject.name = "Dhizuku-API-Xposed"
+include ':app'
+include ':hidden-api'
