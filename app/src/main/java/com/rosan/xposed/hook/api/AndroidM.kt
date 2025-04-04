@@ -6,14 +6,17 @@ import android.content.ComponentName
 import android.content.pm.IPackageInstaller
 import android.content.pm.IPackageInstallerSession
 import android.content.pm.PackageInstaller
+
 import com.rosan.dhizuku.api.Dhizuku
 import com.rosan.dhizuku.api.DhizukuBinderWrapper
 import com.rosan.xposed.Hook
 import com.rosan.xposed.hook.DhizukuAPI
+
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.XposedHelpers
 import de.robv.android.xposed.callbacks.XC_LoadPackage
+
 import java.lang.reflect.Field
 
 class AndroidM(lpparam: XC_LoadPackage.LoadPackageParam) : Hook(lpparam) {
@@ -108,7 +111,7 @@ class AndroidM(lpparam: XC_LoadPackage.LoadPackageParam) : Hook(lpparam) {
                                 param.args[index] = DhizukuAPI.serverComponentName
                             }
                             if (it.name.contains("Delegated")) {
-                                param.args[1] = DhizukuAPI.serverComponentName
+                                param.args[1] = DhizukuAPI.serverPackageName
                             }
                         }
                     }
