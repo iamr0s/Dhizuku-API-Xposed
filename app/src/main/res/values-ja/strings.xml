@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_description">Xposed 版 Dhizuku API：アプリに Dhizuku のサポートを強制するモジュール。</string>
+</resources>

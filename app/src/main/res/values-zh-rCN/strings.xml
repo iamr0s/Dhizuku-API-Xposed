@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">DAX</string>
     <string name="app_description">Dhizuku接口Xposed版：一个能强制应用支持Dhizuku的模块.</string>
 </resources>

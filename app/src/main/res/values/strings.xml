@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">DAX</string>
-    <string name="app_description">Dhizuku API for Xposed: a xposed module that forces applications to support Dhizuku.</string>
+    <string name="app_name" translatable="false">DAX</string>
+    <string name="app_description">Dhizuku API for Xposed: a Xposed module that forces applications to support Dhizuku.</string>
 </resources>
