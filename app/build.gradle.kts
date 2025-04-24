@@ -1,8 +1,9 @@
+import org.jetbrains.kotlin.konan.properties.loadProperties
 import java.util.Properties
 
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
+    alias(libs.plugins.agp.app)
+    alias(libs.plugins.kotlin)
 }
 
 val keystoreDir = "$rootDir/keystore"
@@ -15,17 +16,23 @@ for (name in arrayOf("r0s.properties", "debug.properties")) {
     break
 }
 
-val dhizukuApiVersion = "2.5.2"
-
 android {
     namespace = "com.rosan.dhizuku.api.xposed"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         minSdk = 21
-        targetSdk = 34
-        versionCode = 6
-        versionName = "1.6 (api_$dhizukuApiVersion)"
+        targetSdk = compileSdk
+
+        val versionProps = loadProperties("$rootDir/version.properties")
+        versionCode = versionProps.getProperty("versionCode").toInt()
+        versionName = versionProps.getProperty("versionName") + " (API: " + libs.versions.dhizuku.get() + ")"
+
+        multiDexEnabled = false
+        proguardFiles(
+            getDefaultProguardFile("proguard-android-optimize.txt"),
+            "proguard-rules.pro"
+        )
     }
 
     signingConfigs {
@@ -56,29 +63,21 @@ android {
         getByName("debug") {
             signingConfig = signingConfigs.getByName("debug")
             isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
         }
 
         getByName("release") {
             signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
         }
     }
 
     compileOptions {
-        targetCompatibility = JavaVersion.VERSION_17
-        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_21
+        sourceCompatibility = JavaVersion.VERSION_21
     }
 
     kotlin {
-        jvmToolchain(JavaVersion.VERSION_17.majorVersion.toInt())
+        jvmToolchain(JavaVersion.VERSION_21.majorVersion.toInt())
     }
 
     buildFeatures {
@@ -88,10 +87,9 @@ android {
 }
 
 dependencies {
-    compileOnly("androidx.annotation:annotation:1.8.0")
-    compileOnly("de.robv.android.xposed:api:82")
-
+    compileOnly(libs.annotation)
     compileOnly(project(":hidden-api"))
 
-    implementation("io.github.iamr0s:Dhizuku-API:$dhizukuApiVersion")
+    compileOnly(libs.xposed.api)
+    implementation(libs.dhizuku)
 }

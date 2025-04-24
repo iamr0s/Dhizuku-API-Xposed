@@ -1,11 +1,19 @@
-*.iml
-.gradle
+# Gradle
+/.gradle/
+# Android SDK
 /local.properties
-/.idea
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
-local.properties
-/keystore
+# Kotlin
+/.kotlin/
+# Gradle Build
+/*/build/
+# AGP Lint
+/build/
+# Android Studio Signing APK
+/*/debug/
+/*/release/
+# IntelliJ
+/.idea/
+# VS Code
+/.vscode/
+# Keystore
+/keystore/

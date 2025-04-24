@@ -1,0 +1,16 @@
+[versions]
+agp = "8.9.2"
+kotlin = "2.1.20"
+annotation = "1.9.1"
+dhizuku = "2.5.3"
+xposed = "82"
+
+[plugins]
+agp-app = { id = "com.android.application", version.ref = "agp" }
+agp-lib = { id = "com.android.library", version.ref = "agp" }
+kotlin = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+
+[libraries]
+annotation = { group = "androidx.annotation", name = "annotation", version.ref = "annotation" }
+dhizuku = { group = "io.github.iamr0s", name = "Dhizuku-API", version.ref = "dhizuku" }
+xposed-api = { group = "de.robv.android.xposed", name = "api", version.ref = "xposed" }
