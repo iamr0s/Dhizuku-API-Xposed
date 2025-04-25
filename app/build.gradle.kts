@@ -26,7 +26,7 @@ android {
 
         val versionProps = loadProperties("$rootDir/version.properties")
         versionCode = versionProps.getProperty("versionCode").toInt()
-        versionName = versionProps.getProperty("versionName") + " (API: " + libs.versions.dhizuku.get() + ")"
+        versionName = versionProps.getProperty("versionName")
 
         multiDexEnabled = false
         proguardFiles(
