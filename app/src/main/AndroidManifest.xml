@@ -18,6 +18,10 @@
             android:name="xposedminversion"
             android:value="54" />
 
+        <meta-data
+            android:name="xposedscope"
+            android:value="com.afwsamples.testdpc" />
+
     </application>
 
 </manifest>
