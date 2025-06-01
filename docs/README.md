@@ -6,4 +6,5 @@ LSPosed and LSPatch is also supported.
 
 # Operation verified
 
-- [**TestDPC v9.0.12**](https://github.com/googlesamples/android-testdpc/releases/tag/v9.0.12)
+- [**Test DPC (v9.0.12)**](https://github.com/googlesamples/android-testdpc/releases/tag/v9.0.12)
+- [**Aurora Store (4.7.0)**](https://gitlab.com/AuroraOSS/AuroraStore/-/releases/4.7.0)
