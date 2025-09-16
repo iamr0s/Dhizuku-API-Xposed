@@ -1,39 +1,29 @@
-name: Build
+name: Build APK
 
 on:
+  workflow_dispatch:   # 允许手动触发
   push:
-    paths-ignore:
-      - docs/**
-  pull_request:
-  workflow_dispatch:
+    branches: [ main ]
 
 jobs:
   build:
-    name: Build
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     steps:
-
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: 21
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
-
-      - name: Set environments
-        run: |
-          {
-            echo "repo=$(echo ${GITHUB_REPOSITORY#$GITHUB_REPOSITORY_OWNER/})"
-            echo "version=v$(grep versionName version.properties | awk -F\= '{print $2}')"
-            echo "commit=$(echo ${{ github.sha }} | cut -c-7)"
-          } >> $GITHUB_ENV
-
-      - name: Build
+    - uses: actions/checkout@v4
+    - name: set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+    - name: Grant exec perm
+      run: chmod +x gradlew
+    - name: Build debug APK
+      run: ./gradlew assembleDebug
+    - name: Upload APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: app-debug
+        path: app/build/outputs/apk/debug/*.apk
         run: |
           ./gradlew --no-daemon --warning-mode=all assembleDebug
           cp -f app/build/outputs/apk/debug/app-debug.apk ${{ env.repo }}-${{ env.version }}@${{ env.commit }}.apk
