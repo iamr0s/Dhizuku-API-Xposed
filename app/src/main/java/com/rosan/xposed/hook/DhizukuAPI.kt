@@ -43,18 +43,38 @@ class DhizukuAPI(lpparam: XC_LoadPackage.LoadPackageParam) : Hook(lpparam) {
     }
 
     override fun hooking() {
-        XposedHelpers.findAndHookMethod(
-            Application::class.java,
-            "attach",
-            Context::class.java,
-            object : XC_MethodHook() {
-                override fun afterHookedMethod(param: MethodHookParam?) {
-                    super.afterHookedMethod(param)
-                    context = param?.args?.get(0) as Context
-                    if (!Dhizuku.init(context)) return
-                    serverComponentName = Dhizuku.getOwnerComponent()
-                    AndroidM(lpparam).start()
+    XposedHelpers.findAndHookMethod(
+        Application::class.java,
+        "attach",
+        Context::class.java,
+        object : XC_MethodHook() {
+            override fun afterHookedMethod(param: MethodHookParam?) {
+                super.afterHookedMethod(param)
+                val ctx = param?.args?.get(0) as? Context ?: return
+
+                // ✅ 初始化 Dhizuku
+                if (!Dhizuku.init(ctx)) {
+                    XposedBridge.log("[DhizukuAPI] Dhizuku.init() failed")
+                    return
                 }
-            })
-    }
+
+                serverComponentName = Dhizuku.getOwnerComponent()
+                XposedBridge.log("[DhizukuAPI] Dhizuku initialized, server: $serverComponentName")
+
+                // ✅ 主动触发权限请求（延迟2秒，确保应用在前台）
+                thread {
+                    Thread.sleep(2000)
+                    Dhizuku.requestPermission(object : DhizukuRequestPermissionListener() {
+                        override fun onRequestPermission(grantResult: Int) {
+                            XposedBridge.log("[DhizukuAPI] Permission result: $grantResult")
+                        }
+                    })
+                }
+
+                // ✅ 启动 AndroidM hook
+                AndroidM(lpparam).start()
+            }
+        })
+}
+
 }
