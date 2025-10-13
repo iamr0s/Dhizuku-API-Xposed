@@ -2,7 +2,7 @@
 agp = "8.13.0"
 kotlin = "2.2.20"
 annotation = "1.9.1"
-dhizuku = "2.5.3"
+dhizuku = "2.5.4"
 xposed = "82"
 
 [plugins]
