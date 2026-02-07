@@ -1,6 +1,6 @@
 [versions]
 agp = "9.0.0"
-kotlin = "2.3.0"
+kotlin = "2.3.10"
 annotation = "1.9.1"
 dhizuku = "2.5.4"
 xposed = "82"
