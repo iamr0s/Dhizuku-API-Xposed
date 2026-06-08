@@ -16,7 +16,6 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage
 import kotlin.concurrent.thread
 
 class DhizukuAPI(lpparam: XC_LoadPackage.LoadPackageParam) : Hook(lpparam) {
-    private lateinit var context: Context
 
     companion object {
         lateinit var serverComponentName: ComponentName
@@ -29,13 +28,15 @@ class DhizukuAPI(lpparam: XC_LoadPackage.LoadPackageParam) : Hook(lpparam) {
         fun <T> whenDhizukuPermissionGranted(action: () -> T): T? {
             if (Dhizuku.isPermissionGranted()) return action.invoke()
             if (!requesting) synchronized(this) {
-                requesting = true
-                thread {
-                    Dhizuku.requestPermission(object : DhizukuRequestPermissionListener() {
-                        override fun onRequestPermission(grantResult: Int) {
-                            requesting = false
-                        }
-                    })
+                if (!requesting) {
+                    requesting = true
+                    thread {
+                        Dhizuku.requestPermission(object : DhizukuRequestPermissionListener() {
+                            override fun onRequestPermission(grantResult: Int) {
+                                requesting = false
+                            }
+                        })
+                    }
                 }
             }
             return null
@@ -50,7 +51,7 @@ class DhizukuAPI(lpparam: XC_LoadPackage.LoadPackageParam) : Hook(lpparam) {
             object : XC_MethodHook() {
                 override fun afterHookedMethod(param: MethodHookParam?) {
                     super.afterHookedMethod(param)
-                    context = param?.args?.get(0) as Context
+                    val context = param?.args?.get(0) as Context
                     if (!Dhizuku.init(context)) return
                     serverComponentName = Dhizuku.getOwnerComponent()
                     AndroidM(lpparam).start()
