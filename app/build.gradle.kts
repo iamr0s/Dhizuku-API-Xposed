@@ -17,7 +17,7 @@ for (name in arrayOf("r0s.properties", "debug.properties")) {
 
 android {
     namespace = "com.rosan.dhizuku.api.xposed"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         minSdk = 26
