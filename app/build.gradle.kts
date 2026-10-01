@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import java.util.Properties
 
@@ -23,7 +24,7 @@ android {
         minSdk = 26
         targetSdk = compileSdk
 
-        val versionProps = loadProperties("$rootDir/version.properties")
+        val versionProps: Properties = File("$rootDir/version.properties").loadProperties()
         versionCode = versionProps.getProperty("versionCode").toInt()
         versionName = versionProps.getProperty("versionName")
 
