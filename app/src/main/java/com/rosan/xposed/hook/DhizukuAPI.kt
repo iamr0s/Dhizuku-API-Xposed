@@ -25,17 +25,25 @@ class DhizukuAPI(lpparam: XC_LoadPackage.LoadPackageParam) : Hook(lpparam) {
             get() = serverComponentName.packageName
 
         private var requesting = false
+
+        private fun isPermissionGranted(): Boolean =
+            runCatching { Dhizuku.isPermissionGranted() }.getOrDefault(false)
+
         fun <T> whenDhizukuPermissionGranted(action: () -> T): T? {
-            if (Dhizuku.isPermissionGranted()) return action.invoke()
+            if (isPermissionGranted()) return action.invoke()
             if (!requesting) synchronized(this) {
                 if (!requesting) {
                     requesting = true
                     thread {
-                        Dhizuku.requestPermission(object : DhizukuRequestPermissionListener() {
-                            override fun onRequestPermission(grantResult: Int) {
-                                requesting = false
-                            }
-                        })
+                        try {
+                            Dhizuku.requestPermission(object : DhizukuRequestPermissionListener() {
+                                override fun onRequestPermission(grantResult: Int) {
+                                    requesting = false
+                                }
+                            })
+                        } catch (_: Throwable) {
+                            requesting = false
+                        }
                     }
                 }
             }
