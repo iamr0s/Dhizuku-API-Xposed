@@ -9,8 +9,6 @@ import com.rosan.dhizuku.api.DhizukuRequestPermissionListener;
 import com.rosan.xposed.Hook;
 import com.rosan.xposed.hook.api.AndroidM;
 
-import java.util.function.Supplier;
-
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
@@ -39,8 +37,12 @@ public class DhizukuAPI extends Hook {
         }
     }
 
-    public static <T> T whenDhizukuPermissionGranted(Supplier<T> action) {
-        if (isPermissionGranted()) return action.get();
+    public interface Action<T> {
+        T run();
+    }
+
+    public static <T> T whenDhizukuPermissionGranted(Action<T> action) {
+        if (isPermissionGranted()) return action.run();
         if (!requesting) {
             synchronized (DhizukuAPI.class) {
                 if (!requesting) {

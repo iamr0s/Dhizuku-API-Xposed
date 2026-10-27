@@ -16,11 +16,11 @@ for (name in ["r0s.properties", "debug.properties"]) {
 
 android {
     namespace = "com.rosan.dhizuku.api.xposed"
-    compileSdk = 37
+    compileSdk = 36
 
     defaultConfig {
-        minSdk = 26
-        targetSdk = 37
+        minSdk = 23
+        targetSdk = 36
 
         def versionProps = new Properties()
         file("$rootDir/version.properties").withInputStream { versionProps.load(it) }
@@ -74,7 +74,6 @@ android {
 }
 
 dependencies {
-    compileOnly libs.annotation
     compileOnly project(":hidden-api")
 
     compileOnly libs.xposed.api

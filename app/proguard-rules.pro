@@ -13,13 +13,7 @@
 
 -keepattributes Exceptions,InnerClasses,Signature,Deprecated,SourceFile,LineNumberTable,*Annotation*,EnclosingMethod
 
--keep @androidx.annotation.Keep class * {*;}
--keep class * {
-    @androidx.annotation.Keep <fields>;
-}
--keepclassmembers class * {
-    @androidx.annotation.Keep <methods>;
-}
+-keep class com.rosan.xposed.HookInit { *; }
 
 -keep public class * extends android.os.IInterface
 -keep public class * extends android.app.Activity

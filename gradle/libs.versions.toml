@@ -1,7 +1,6 @@
 [versions]
-agp = "9.4.1"
-annotation = "1.11.0"
-dhizuku = "2.6.0"
+agp = "8.13.2"
+dhizuku = "2.7.0"
 xposed = "82"
 
 [plugins]
@@ -9,6 +8,5 @@ agp-app = { id = "com.android.application", version.ref = "agp" }
 agp-lib = { id = "com.android.library", version.ref = "agp" }
 
 [libraries]
-annotation = { group = "androidx.annotation", name = "annotation", version.ref = "annotation" }
 dhizuku = { group = "io.github.iamr0s", name = "Dhizuku-API", version.ref = "dhizuku" }
 xposed-api = { group = "de.robv.android.xposed", name = "api", version.ref = "xposed" }
