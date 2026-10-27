@@ -1,11 +1,10 @@
 import java.util.Properties
 
 plugins {
-    alias(libs.plugins.agp.app)
+    alias libs.plugins.agp.app
 }
 
 def keystoreDir = "$rootDir/keystore"
-
 def keystoreProps = new Properties()
 for (name in ["r0s.properties", "debug.properties"]) {
     def f = file("$keystoreDir/$name")
@@ -32,19 +31,18 @@ android {
     }
 
     signingConfigs {
-        debug {
+        base {
             keyAlias = keystoreProps.getProperty("keyAlias")
             keyPassword = keystoreProps.getProperty("keyPassword")
             storeFile = file("$keystoreDir/${keystoreProps.getProperty("storeFile")}")
             storePassword = keystoreProps.getProperty("storePassword")
-            enableV1Signing = true
-            enableV2Signing = true
+
         }
     }
 
     buildTypes {
         configureEach {
-            signingConfig = signingConfigs.debug
+            signingConfig = signingConfigs.base
             minifyEnabled = false
         }
         release {
