@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.konan.properties.loadProperties
 import java.util.Properties
 
 plugins {
@@ -24,7 +22,9 @@ android {
         minSdk = 26
         targetSdk = compileSdk
 
-        val versionProps: Properties = File("$rootDir/version.properties").loadProperties()
+        val versionProps = Properties().apply {
+            file("$rootDir/version.properties").inputStream().use { load(it) }
+        }
         versionCode = versionProps.getProperty("versionCode").toInt()
         versionName = versionProps.getProperty("versionName")
 
@@ -74,10 +74,6 @@ android {
     compileOptions {
         targetCompatibility = JavaVersion.VERSION_21
         sourceCompatibility = JavaVersion.VERSION_21
-    }
-
-    kotlin {
-        jvmToolchain(JavaVersion.VERSION_21.majorVersion.toInt())
     }
 
     buildFeatures {

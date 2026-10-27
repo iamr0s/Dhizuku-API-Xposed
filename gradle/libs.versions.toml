@@ -1,6 +1,5 @@
 [versions]
 agp = "9.4.1"
-kotlin = "2.4.21"
 annotation = "1.11.0"
 dhizuku = "2.6.0"
 xposed = "82"
@@ -8,7 +7,6 @@ xposed = "82"
 [plugins]
 agp-app = { id = "com.android.application", version.ref = "agp" }
 agp-lib = { id = "com.android.library", version.ref = "agp" }
-kotlin = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 
 [libraries]
 annotation = { group = "androidx.annotation", name = "annotation", version.ref = "annotation" }
