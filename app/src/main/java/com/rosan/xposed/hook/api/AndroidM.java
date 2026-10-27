@@ -3,6 +3,9 @@ package com.rosan.xposed.hook.api;
 import android.app.admin.DevicePolicyManager;
 import android.app.admin.IDevicePolicyManager;
 import android.content.ComponentName;
+import android.content.pm.IPackageInstaller;
+import android.content.pm.IPackageInstallerSession;
+import android.content.pm.PackageInstaller;
 import android.os.IBinder;
 
 import com.rosan.dhizuku.api.Dhizuku;
@@ -33,6 +36,7 @@ public class AndroidM extends Hook {
         hookIsOwner();
         hookPackageNameGet();
         hookDeviceOwnerComponentName();
+        hookPackageInstaller();
         hookOwnerPermission();
     }
 
@@ -111,6 +115,106 @@ public class AndroidM extends Hook {
                     });
                 }
             });
+        }
+    }
+
+    private void hookPackageInstaller() {
+        XposedHelpers.findAndHookMethod(
+                findClass("android.app.ApplicationPackageManager"),
+                "getPackageInstaller",
+                new XC_MethodHook() {
+                    @Override
+                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                        super.afterHookedMethod(param);
+                        if (param == null || !(param.getResult() instanceof PackageInstaller)) return;
+                        proxyPackageInstaller((PackageInstaller) param.getResult());
+                    }
+                });
+
+        XposedHelpers.findAndHookMethod(
+                PackageInstaller.class,
+                "createSession",
+                PackageInstaller.SessionParams.class,
+                new XC_MethodHook() {
+                    @Override
+                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                        super.afterHookedMethod(param);
+                        if (param == null || !(param.getResult() instanceof PackageInstaller.Session)) return;
+                        proxyPackageInstallerSession((PackageInstaller.Session) param.getResult());
+                    }
+                });
+
+        XposedHelpers.findAndHookMethod(
+                PackageInstaller.class,
+                "openSession",
+                int.class,
+                new XC_MethodHook() {
+                    @Override
+                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                        super.afterHookedMethod(param);
+                        if (param == null || !(param.getResult() instanceof PackageInstaller.Session)) return;
+                        proxyPackageInstallerSession((PackageInstaller.Session) param.getResult());
+                    }
+                });
+
+        XposedBridge.hookAllConstructors(
+                PackageInstaller.Session.class,
+                new XC_MethodHook() {
+                    @Override
+                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                        super.afterHookedMethod(param);
+                        if (param == null || !(param.thisObject instanceof PackageInstaller.Session)) return;
+                        proxyPackageInstallerSession((PackageInstaller.Session) param.thisObject);
+                    }
+                });
+    }
+
+    private Field packageInstallerSessionField;
+
+    private void proxyPackageInstallerSession(PackageInstaller.Session packageInstallerSession) {
+        try {
+            Field field = packageInstallerSessionField;
+            if (field == null) {
+                field = packageInstallerSession.getClass().getDeclaredField("mSession");
+                packageInstallerSessionField = field;
+            }
+            field.setAccessible(true);
+            IPackageInstallerSession session = (IPackageInstallerSession) field.get(packageInstallerSession);
+            IBinder binder = session.asBinder();
+            if (binder instanceof DhizukuBinderWrapper) return;
+            field.set(packageInstallerSession,
+                    IPackageInstallerSession.Stub.asInterface(Dhizuku.binderWrapper(binder)));
+        } catch (Throwable ignored) {
+        }
+    }
+
+    private Field packageInstallerServiceField;
+    private Field packageInstallerNameField;
+
+    private void proxyPackageInstaller(PackageInstaller packageInstaller) {
+        try {
+            Field serviceField = packageInstallerServiceField;
+            if (serviceField == null) {
+                serviceField = packageInstaller.getClass().getDeclaredField("mInstaller");
+                packageInstallerServiceField = serviceField;
+            }
+            serviceField.setAccessible(true);
+            IPackageInstaller installer = (IPackageInstaller) serviceField.get(packageInstaller);
+            IBinder binder = installer.asBinder();
+            if (!(binder instanceof DhizukuBinderWrapper)) {
+                serviceField.set(packageInstaller,
+                        IPackageInstaller.Stub.asInterface(Dhizuku.binderWrapper(binder)));
+            }
+
+            Field nameField = packageInstallerNameField;
+            if (nameField == null) {
+                nameField = packageInstaller.getClass().getDeclaredField("mInstallerPackageName");
+                packageInstallerNameField = nameField;
+            }
+            nameField.setAccessible(true);
+            if (!lpparam.packageName.equals(nameField.get(packageInstaller))) return;
+            nameField.set(packageInstaller, DhizukuAPI.getServerPackageName());
+        } catch (Throwable ignored) {
         }
     }
 
