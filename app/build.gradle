@@ -20,7 +20,7 @@ android {
 
     defaultConfig {
         minSdk = 23
-        targetSdk = 36
+        targetSdk = compileSdk
 
         def versionProps = new Properties()
         file("$rootDir/version.properties").withInputStream { versionProps.load(it) }
@@ -40,24 +40,14 @@ android {
             enableV1Signing = true
             enableV2Signing = true
         }
-
-        release {
-            keyAlias = keystoreProps.getProperty("keyAlias")
-            keyPassword = keystoreProps.getProperty("keyPassword")
-            storeFile = file("$keystoreDir/${keystoreProps.getProperty("storeFile")}")
-            storePassword = keystoreProps.getProperty("storePassword")
-            enableV1Signing = true
-            enableV2Signing = true
-        }
     }
 
     buildTypes {
-        debug {
+        configureEach {
             signingConfig = signingConfigs.debug
             minifyEnabled = false
         }
         release {
-            signingConfig = signingConfigs.release
             minifyEnabled = true
         }
     }
@@ -67,10 +57,6 @@ android {
         targetCompatibility = JavaVersion.VERSION_21
     }
 
-    buildFeatures {
-        buildConfig = true
-        aidl = true
-    }
 }
 
 dependencies {
