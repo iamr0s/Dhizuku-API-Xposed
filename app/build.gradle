@@ -32,11 +32,10 @@ android {
 
     signingConfigs {
         base {
-            keyAlias = keystoreProps.getProperty("keyAlias")
-            keyPassword = keystoreProps.getProperty("keyPassword")
             storeFile = file("$keystoreDir/${keystoreProps.getProperty("storeFile")}")
             storePassword = keystoreProps.getProperty("storePassword")
-
+            keyAlias = keystoreProps.getProperty("keyAlias")
+            keyPassword = keystoreProps.getProperty("keyPassword")
         }
     }
 

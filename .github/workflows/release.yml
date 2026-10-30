@@ -1,0 +1,56 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-24.04
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Java
+        uses: actions/setup-java@v6
+        with:
+          distribution: 'temurin'
+          java-version: 25
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
+
+      - name: Set environments
+        run: |
+          repo="$(echo ${GITHUB_REPOSITORY#$GITHUB_REPOSITORY_OWNER/})"
+          version="v$(grep versionName version.properties | awk -F\= '{print $2}')"
+          {
+            echo "repo=$repo"
+            echo "version=$version"
+            echo "artifact=$repo-$version"
+          } >> $GITHUB_ENV
+
+      - name: Set signing config
+        run: |
+            printf '%s' '${{ secrets.STORE_FILE }}' | base64 -d > keystore/r0s.jks
+            {
+              echo "storeFile=r0s.jks"
+              echo "storePassword=${{ secrets.STORE_PASS }}"
+              echo "keyAlias=${{ secrets.KEY_ALIAS }}"
+              echo "keyPassword=${{ secrets.KEY_PASS }}"
+            } > keystore/r0s.properties
+
+      - name: Build
+        run: |
+          ./gradlew assembleRelease
+          cp -f app/build/outputs/apk/release/app-release.apk "${{ env.artifact }}.apk"
+
+      - name: Upload
+        uses: actions/upload-artifact@v7
+        with:
+          archive: false
+          path: ${{ env.artifact }}.apk
